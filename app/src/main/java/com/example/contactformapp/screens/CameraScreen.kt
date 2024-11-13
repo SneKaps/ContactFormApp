@@ -22,8 +22,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import coil.size.Size
+import com.example.contactformapp.BuildConfig
 
 import com.example.contactformapp.createImageFile
 
@@ -35,7 +37,7 @@ fun CameraScreen(modifier : Modifier){
     val file = context.createImageFile()
     val uri = FileProvider.getUriForFile(
         context,
-        "com.example.contactformapp",
+        BuildConfig.APPLICATION_ID + ".provider",
         file
     )
     var captureImageUri by remember{
@@ -53,6 +55,7 @@ fun CameraScreen(modifier : Modifier){
     ) {
         if(it){
             Toast.makeText(context, "Permission Granted", Toast.LENGTH_SHORT).show()
+            cameraLauncher.launch(uri)
         }
         else{
             Toast.makeText(context, "Kindly grant permission by going to settings", Toast.LENGTH_SHORT).show()
