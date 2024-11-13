@@ -18,7 +18,7 @@ import com.example.contactformapp.ui.theme.ContactFormAppTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+//        enableEdgeToEdge()
         setContent {
             ContactFormAppTheme {
                 CameraScreen(modifier = Modifier)

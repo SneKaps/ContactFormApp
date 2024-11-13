@@ -7,8 +7,11 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -24,15 +28,14 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
+import coil.request.ImageRequest
 import coil.size.Size
 import com.example.contactformapp.BuildConfig
-
 import com.example.contactformapp.createImageFile
 
 
 @Composable
-fun CameraScreen(modifier : Modifier){
-
+fun CameraScreen(modifier: Modifier) {
     val context = LocalContext.current
     val file = context.createImageFile()
     val uri = FileProvider.getUriForFile(
@@ -62,33 +65,45 @@ fun CameraScreen(modifier : Modifier){
         }
     }
 
-    Column(){
+    Box(modifier = modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .wrapContentSize()
+                .align(Alignment.Center),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            val isImageBeingDisplayed = captureImageUri.path?.isNotEmpty() == true
 
-        Button(
-            onClick = {
-                val permissionCheckResult = ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
-                if(permissionCheckResult == PackageManager.PERMISSION_GRANTED){
-                    cameraLauncher.launch(uri)
+            if (isImageBeingDisplayed) {
+                Image(
+                    modifier = modifier.padding(16.dp, 8.dp),
+                    painter = rememberAsyncImagePainter(
+                        ImageRequest.Builder(LocalContext.current).data(data = captureImageUri)
+                            .apply(block = fun ImageRequest.Builder.() {
+                                size(Size.ORIGINAL)
+                            }).build()
+                    ),
+                    contentDescription = null
+                )
+            }
+
+            // Hide the upload image button after image is taken successfully
+            if (!isImageBeingDisplayed) {
+                Button(
+                    onClick = {
+                        val permissionCheckResult =
+                            ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
+                        if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
+                            cameraLauncher.launch(uri)
+                        } else {
+                            permissionLauncher.launch(Manifest.permission.CAMERA)
+                        }
+                    }
+                ) {
+                    Text(text = "Upload Your Image")
                 }
-                else{
-                    permissionLauncher.launch(Manifest.permission.CAMERA)
-                }
-            }) {
-            Text(text = "Upload Your Image")
+            }
         }
-    }
-
-    if (captureImageUri.path?.isNotEmpty() == true){
-        Image(
-            modifier = modifier.padding(16.dp, 8.dp),
-            painter = rememberImagePainter(
-                data = captureImageUri,
-                builder = {
-                    size(Size.ORIGINAL)
-                }
-            ),
-            contentDescription = null
-        )
     }
 }
 
