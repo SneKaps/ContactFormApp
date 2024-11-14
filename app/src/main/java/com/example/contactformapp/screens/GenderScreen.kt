@@ -1,11 +1,14 @@
 package com.example.contactformapp.screens
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -29,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
@@ -36,14 +40,28 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.contactformapp.PermissionRequest
+import com.example.contactformapp.audiorecorder.playback.AndroidAudioPlayer
+import com.example.contactformapp.audiorecorder.recorder.AndroidAudioRecorder
+import java.io.File
 
 
 @SuppressLint("RememberReturnType", "UseOfNonLambdaOffsetOverload")
 @Composable
 fun GenderScreen(modifier: Modifier,
                  navController: NavController){
+    val context = LocalContext.current
+    val cacheDir = context.cacheDir
 
+    val recorder by lazy {
+        AndroidAudioRecorder(context)
+    }
 
+    val player by lazy {
+        AndroidAudioPlayer(context)
+    }
+
+    var audioFile : File? = null
 
     //variable to hold state of expanded menu
     var expanded by remember{
@@ -74,6 +92,20 @@ fun GenderScreen(modifier: Modifier,
     Column(modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally){
+
+        PermissionRequest(
+            onPermissionGranted = {
+                File(cacheDir, "audio.mp3").also {
+                    recorder.start(it)
+                    audioFile =it
+                }
+            },
+            onPermissionDenied = {
+                Toast.makeText(context, "Microphone permission is required to record audio.", Toast.LENGTH_SHORT).show()
+            }
+        )
+
+        Spacer(modifier = Modifier.height(6.dp))
 
         Text(text = "Q1. Select your gender",
             modifier = modifier.padding(6.dp)
