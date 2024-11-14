@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -33,11 +34,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 
 
 @SuppressLint("RememberReturnType", "UseOfNonLambdaOffsetOverload")
 @Composable
-fun GenderScreen(modifier: Modifier){
+fun GenderScreen(modifier: Modifier,
+                 navController: NavController){
+
+
 
     //variable to hold state of expanded menu
     var expanded by remember{
@@ -93,7 +99,7 @@ fun GenderScreen(modifier: Modifier){
         DropdownMenu(expanded = expanded,
             onDismissRequest = { expanded = false},
             modifier = Modifier
-                .width(with(LocalDensity.current){ size.width.toDp() })
+                .width(with(LocalDensity.current) { size.width.toDp() })
                 .offset(y = with(LocalDensity.current) { size.height.toDp() }) //position dropdown below the text field
         ) {
             options.forEach{lable->
@@ -107,13 +113,15 @@ fun GenderScreen(modifier: Modifier){
             }
         }
 
+        Button(onClick = {
+            navController.navigate("AgeScreen")
+        }) {
+            Text(text = "Next")
+        }
+
 
 
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun PreviewGenderScreen(){
-    GenderScreen(Modifier)
-}
+

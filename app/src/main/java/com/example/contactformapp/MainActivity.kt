@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
 import com.example.contactformapp.screens.CameraScreen
 import com.example.contactformapp.screens.GenderScreen
 import com.example.contactformapp.ui.theme.ContactFormAppTheme
@@ -21,7 +22,8 @@ class MainActivity : ComponentActivity() {
 //        enableEdgeToEdge()
         setContent {
             ContactFormAppTheme {
-                CameraScreen(modifier = Modifier)
+                Navigation()
+                //CameraScreen(modifier = Modifier)
                 //GenderScreen(modifier = Modifier)
             }
         }

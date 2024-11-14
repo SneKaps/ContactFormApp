@@ -26,6 +26,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import coil.request.ImageRequest
@@ -35,7 +37,9 @@ import com.example.contactformapp.createImageFile
 
 
 @Composable
-fun CameraScreen(modifier: Modifier) {
+fun CameraScreen(modifier: Modifier,
+                 navController: NavController) {
+
     val context = LocalContext.current
     val file = context.createImageFile()
     val uri = FileProvider.getUriForFile(
@@ -72,6 +76,7 @@ fun CameraScreen(modifier: Modifier) {
                 .align(Alignment.Center),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Text(text = "Q3. Upload your image")
             val isImageBeingDisplayed = captureImageUri.path?.isNotEmpty() == true
 
             if (isImageBeingDisplayed) {
@@ -85,7 +90,16 @@ fun CameraScreen(modifier: Modifier) {
                     ),
                     contentDescription = null
                 )
+
+                Button(onClick = {
+                    navController.navigate("SubmitScreen")
+                },
+                    modifier.padding(16.dp)) {
+                    Text(text = "Next")
+                }
+
             }
+
 
             // Hide the upload image button after image is taken successfully
             if (!isImageBeingDisplayed) {
@@ -107,8 +121,4 @@ fun CameraScreen(modifier: Modifier) {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun CameraScreenPreview(){
-    CameraScreen(modifier = Modifier)
-}
+
