@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,13 +20,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.contactformapp.PermissionRequest
 import com.example.contactformapp.UserData
 import com.example.contactformapp.audiorecorder.location.LocationDisplay
 import com.example.contactformapp.audiorecorder.location.LocationUtils
 import com.example.contactformapp.audiorecorder.location.LocationViewModel
 import com.example.contactformapp.audiorecorder.recorder.AndroidAudioRecorder
-import com.google.android.gms.maps.model.LatLng
 import java.io.File
 
 @SuppressLint("SuspiciousIndentation")
@@ -90,6 +88,11 @@ fun SubmitScreen(modifier: Modifier,
         if (locationFetched) {
             Text(text = "Location fetched successfully!")
         }
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        LocationDisplay(context = context, locationUtils = locationUtils, viewModel = viewModel)
+
     }
 }
 

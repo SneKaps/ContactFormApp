@@ -49,11 +49,7 @@ fun GenderScreen(modifier: Modifier,
 
     var audioFile : File? = null
 
-    val recorder = remember(audioFile) {
-        audioFile?.let {
-            AndroidAudioRecorder(context = context, filePath = it.absolutePath)
-        }
-    }
+    var recorder by remember { mutableStateOf<AndroidAudioRecorder?>(null) }
 
     //variable to hold state of expanded menu
     var expanded by remember{
@@ -86,13 +82,10 @@ fun GenderScreen(modifier: Modifier,
         ) {
             PermissionRequest(
                 onPermissionGranted = {
-                    File(cacheDir, "audio.mp3").also {
-                        if (recorder != null) {
-                            recorder.start(it)
-                        }
-                        audioFile = it
-                    }
-                },
+                    audioFile = File(cacheDir, "audio.mp3")
+                    recorder = AndroidAudioRecorder(context = context, filePath = audioFile!!.absolutePath)
+                    recorder?.start(audioFile!!)
+                    },
                 onPermissionDenied = {
                     Toast.makeText(
                         context,
@@ -115,7 +108,7 @@ fun GenderScreen(modifier: Modifier,
             ) {
                 OutlinedTextField(value = selectedOption,
                     onValueChange = {
-                        //selectedOption = it
+
                     },
                     modifier = modifier
                         //to assign same width to the drop down menu as the text field
@@ -135,8 +128,6 @@ fun GenderScreen(modifier: Modifier,
                     onDismissRequest = { expanded = false },
                     modifier = Modifier
                         .align(Alignment.Center)
-//                .width(with(LocalDensity.current) { size.width.toDp() })
-//                .offset(y = with(LocalDensity.current) { size.height.toDp() }) //position dropdown below the text field
                 ) {
                     options.forEach { label ->
                         DropdownMenuItem(
@@ -151,11 +142,9 @@ fun GenderScreen(modifier: Modifier,
             }
 
             Button(onClick = {
-                if(selectedOption.isNotEmpty()){
-                    //update singleton with data
-                    UserData.gender = selectedOption
-                    //navigate to age screen
-                    navController.navigate("AgeScreen")
+                if(selectedOption.isNotEmpty()) {
+                        UserData.gender = selectedOption
+                        navController.navigate("AgeScreen")
                 }
 
             }) {

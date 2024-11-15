@@ -38,6 +38,14 @@ fun AgeScreen(modifier : Modifier,
 
     val context = LocalContext.current
 
+    var isError by remember { mutableStateOf(false) }
+    val errorMessage = when {
+        age.isEmpty() -> "Age is required."
+        age.toIntOrNull() == null -> "Enter a valid number."
+        age.toInt() !in 1..120 -> "Enter an age between 1 and 120."
+        else -> null
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -50,15 +58,23 @@ fun AgeScreen(modifier : Modifier,
         OutlinedTextField(value = age ,
             onValueChange = {
                 age = it
+                isError = errorMessage != null
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             label = { Text(text = "Age")},
-            isError = age.isEmpty() || age.toIntOrNull() == null
+            isError = isError
         )
 
+        if (isError) {
+            Text(
+                text = errorMessage ?: "",
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
+
         Button(onClick = {
-            if (age.isEmpty() || age.toIntOrNull() == null) {
-                Toast.makeText(context, "Enter your age", Toast.LENGTH_SHORT).show()
+            if (errorMessage != null) {
+                Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
             }
             else{
                 UserData.age = age

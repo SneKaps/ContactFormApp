@@ -23,7 +23,7 @@ class AndroidAudioRecorder(
             setAudioSource(MediaRecorder.AudioSource.MIC)
             setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
             setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
-            setOutputFile(FileOutputStream(outputFile).fd)
+            setOutputFile(outputFile.absolutePath)
 
             prepare()
             start()
