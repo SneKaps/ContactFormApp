@@ -7,6 +7,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.core.app.ActivityCompat
 import com.example.contactformapp.MainActivity
 
@@ -18,8 +20,8 @@ fun LocationDisplay(
 ){
     val location = viewModel.location
 
-    val address = location?.let{
-        locationUtils.revereGeocodeLocation(location)
+    var address = remember{
+        mutableStateOf("Fetching address....")
     }
 
     val requestPermissionLauncher = rememberLauncherForActivityResult(
@@ -63,12 +65,18 @@ fun LocationDisplay(
     {
         //Permission already granted update location
         locationUtils.requestLocationUpdates(viewModel)
-        if (location != null) {
-            Text("Address: ${location.longitude}, ${location.latitude} \n $address")
+
+        location?.let {
+            locationUtils.reverseGeocodeLocation(it) { geoAddress ->
+                address.value = geoAddress
+            }
+
+            Text("Address: ${location.latitude}, ${location.longitude} \n$address")
+        } ?: run {
+            Text("Fetching location...")
         }
-    }
-    else{
-        //Request for permission
+    } else {
+        // Request permission
         SideEffect {
             requestPermissionLauncher.launch(
                 arrayOf(
@@ -77,8 +85,7 @@ fun LocationDisplay(
                 )
             )
         }
-
     }
-
-
 }
+
+

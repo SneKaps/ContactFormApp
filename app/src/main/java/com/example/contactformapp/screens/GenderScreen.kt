@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.contactformapp.PermissionRequest
+import com.example.contactformapp.UserData
 import com.example.contactformapp.audiorecorder.playback.AndroidAudioPlayer
 import com.example.contactformapp.audiorecorder.recorder.AndroidAudioRecorder
 import java.io.File
@@ -46,15 +47,13 @@ fun GenderScreen(modifier: Modifier,
     val context = LocalContext.current
     val cacheDir = context.cacheDir
 
-    val recorder by lazy {
-        AndroidAudioRecorder(context)
-    }
-
-    val player by lazy {
-        AndroidAudioPlayer(context)
-    }
-
     var audioFile : File? = null
+
+    val recorder = remember(audioFile) {
+        audioFile?.let {
+            AndroidAudioRecorder(context = context, filePath = it.absolutePath)
+        }
+    }
 
     //variable to hold state of expanded menu
     var expanded by remember{
@@ -88,7 +87,9 @@ fun GenderScreen(modifier: Modifier,
             PermissionRequest(
                 onPermissionGranted = {
                     File(cacheDir, "audio.mp3").also {
-                        recorder.start(it)
+                        if (recorder != null) {
+                            recorder.start(it)
+                        }
                         audioFile = it
                     }
                 },
@@ -150,7 +151,13 @@ fun GenderScreen(modifier: Modifier,
             }
 
             Button(onClick = {
-                navController.navigate("AgeScreen")
+                if(selectedOption.isNotEmpty()){
+                    //update singleton with data
+                    UserData.gender = selectedOption
+                    //navigate to age screen
+                    navController.navigate("AgeScreen")
+                }
+
             }) {
                 Text(text = "Next")
             }

@@ -52,17 +52,34 @@ class LocationUtils(val context: Context) {
 
     }
 
-    @Composable
-    fun revereGeocodeLocation(location: LocationData): Any? {
-        val geocoder = Geocoder(context, Locale.getDefault())
-        val coordinate = LatLng(location.latitude, location.longitude)
-        val addresses: MutableList<Address>
-        addresses = geocoder.getFromLocation(coordinate.latitude, coordinate.longitude, 1)!!
-        return if (addresses.isNotEmpty()){
-            addresses[0].getAddressLine(0)
+    @SuppressLint("MissingPermission")
+    fun getLastKnownLocation(onSuccess:  (LocationData) -> Unit, onFailure: () -> Unit) {
+        if (hasLocationPermission(context)) {
+            _fusedLocationClient.lastLocation
+                .addOnSuccessListener { location ->
+                    location?.let {
+                        onSuccess(LocationData(it.latitude, it.longitude))
+                    } ?: run {
+                        onFailure() // Location is null
+                    }
+                }
+                .addOnFailureListener {
+                    onFailure() // Handle failure to fetch location
+                }
+        } else {
+            onFailure() // No permission
         }
-        else{
-            "Location not found"
+    }
+
+    fun reverseGeocodeLocation(location: LocationData, onResult: (String) -> Unit) {
+        try {
+            val geocoder = Geocoder(context, Locale.getDefault())
+            val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1)
+            val address = if (!addresses.isNullOrEmpty()) addresses[0].getAddressLine(0) else "Location not found"
+            onResult(address)
+        } catch (e: Exception) {
+            onResult("Location not found")
         }
+
     }
 }

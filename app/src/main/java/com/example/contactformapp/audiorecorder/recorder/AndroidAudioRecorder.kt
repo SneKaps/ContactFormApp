@@ -7,12 +7,12 @@ import java.io.File
 import java.io.FileOutputStream
 
 class AndroidAudioRecorder(
-    private val context: Context
+    private val context: Context, override val filePath: String
 ): AudioRecorder {
 
     private var recorder: MediaRecorder? = null
 
-    private fun createRecorder(): MediaRecorder{
+     private fun createRecorder(): MediaRecorder{
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
             MediaRecorder(context)
         } else MediaRecorder()

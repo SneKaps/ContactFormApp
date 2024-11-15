@@ -33,6 +33,7 @@ import coil.compose.rememberImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
 import com.example.contactformapp.BuildConfig
+import com.example.contactformapp.UserData
 import com.example.contactformapp.createImageFile
 
 
@@ -55,6 +56,7 @@ fun CameraScreen(modifier: Modifier,
         { success ->
         if(success)
             captureImageUri = uri
+            UserData.image = uri
     }
 
     val permissionLauncher = rememberLauncherForActivityResult(
@@ -92,7 +94,13 @@ fun CameraScreen(modifier: Modifier,
                 )
 
                 Button(onClick = {
-                    navController.navigate("SubmitScreen")
+                    if (captureImageUri != null){
+                        captureImageUri = UserData.image!!
+                        navController.navigate("SubmitScreen")
+                    }
+                    else {
+                        Toast.makeText(context, "No image captured!", Toast.LENGTH_SHORT).show()
+                    }
                 },
                     modifier.padding(16.dp)) {
                     Text(text = "Next")

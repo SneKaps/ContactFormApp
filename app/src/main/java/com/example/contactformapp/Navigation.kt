@@ -12,6 +12,7 @@ import com.example.contactformapp.audiorecorder.location.LocationViewModel
 import com.example.contactformapp.screens.AgeScreen
 import com.example.contactformapp.screens.CameraScreen
 import com.example.contactformapp.screens.GenderScreen
+import com.example.contactformapp.screens.ResultScreen
 import com.example.contactformapp.screens.SubmitScreen
 
 
@@ -34,7 +35,10 @@ fun Navigation(
             CameraScreen(modifier = Modifier, navController = navController)
         }
         composable("SubmitScreen"){
-            SubmitScreen(Modifier, locationUtils, viewModel )
+            SubmitScreen(Modifier, locationUtils, viewModel, navController)
+        }
+        composable("ResultScreen"){
+            ResultScreen()
         }
     }
 }

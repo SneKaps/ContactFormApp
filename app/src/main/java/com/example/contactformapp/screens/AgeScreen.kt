@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.contactformapp.UserData
 
 @Composable
 fun AgeScreen(modifier : Modifier,
@@ -51,14 +52,16 @@ fun AgeScreen(modifier : Modifier,
                 age = it
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            label = { Text(text = "Age")}
+            label = { Text(text = "Age")},
+            isError = age.isEmpty() || age.toIntOrNull() == null
         )
 
         Button(onClick = {
-            if (age.isEmpty()) {
+            if (age.isEmpty() || age.toIntOrNull() == null) {
                 Toast.makeText(context, "Enter your age", Toast.LENGTH_SHORT).show()
             }
             else{
+                UserData.age = age
                 //navigate
                 navController.navigate("CameraScreen")
             }
